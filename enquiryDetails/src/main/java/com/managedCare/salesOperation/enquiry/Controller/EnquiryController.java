@@ -66,9 +66,9 @@ public class EnquiryController {
 	CreateEnquiryCommonResponse commonResponse2;
 
 	@PostMapping("/getAllLeadType")
-	public ResponseEntity<?> getAllLeadType(@RequestBody EnquiryLeadTypeDto leadDTO) {
-
-		LeadType lead = enquiryDetail.getAllLeadType(leadDTO);
+	public ResponseEntity<?> getAllLeadType() {
+		EnquiryLeadTypeDto leadDTO =new EnquiryLeadTypeDto();
+		List<LeadType> lead = enquiryDetail.getAllLeadType(leadDTO);
 
 		LeadTypeResponse leadTypeResponse = new LeadTypeResponse();
 
@@ -77,12 +77,22 @@ public class EnquiryController {
 		leadTypeResponse.setMessage("Successfully Get LeadTypeResponse");
 
 		List<LeadCommonResponse> list = new ArrayList<>();
+		
+		for(LeadType cm:lead ) {
+			LeadCommonResponse commonResponse = new LeadCommonResponse();
+			commonResponse.setValue(cm.getId());
+			commonResponse.setLabel(cm.getLeadName());
+			list.add(commonResponse);
+			
+			
+		}
 
-		LeadCommonResponse commonResponse = new LeadCommonResponse();
-		commonResponse.setLeadName(lead.getLeadName());
-		commonResponse.setActive(lead.isActive());
-		commonResponse.setCreatedAt(lead.getCreatedAt());
-		list.add(commonResponse);
+		
+		
+		
+		//commonResponse.setActive(lead.isActive());
+		//commonResponse.setCreatedAt(lead.getCreatedAt());
+		
 
 		leadTypeResponse.setData(list);
 
@@ -91,32 +101,30 @@ public class EnquiryController {
 	}
 
 	@PostMapping("/getAllAssignedTo")
-	public ResponseEntity<?> getAllAssignedTo(@RequestBody AssignedByDto assignDTO) {
-
-		CareCoordinator care = enquiryDetail.getAllAssignedBy(assignDTO);
+	public ResponseEntity<?> getAllAssignedTo() {
+		AssignedByDto assignDTO=new AssignedByDto();
+		List<CareCoordinator> care = enquiryDetail.getAllAssignedBy(assignDTO);
 
 		AssignedResponse response = new AssignedResponse();
 
 		response.setStatusCode(HttpStatus.OK);
 		response.setStatus("Success");
-		response.setMessage("Successfully Get LeadTypeResponse");
+		response.setMessage("Successfully Get AssignToResponse ");
 
 		List<AssignedCommonResponse> list = new ArrayList<>();
+		for(CareCoordinator cc:care) {
+			
+			AssignedCommonResponse assignRes = new AssignedCommonResponse();
+			
+			assignRes.setValue(cc.getCarecoordinator_id());
+			assignRes.setLabel(cc.getCarecoordinator_name());
+			
 
-		AssignedCommonResponse assignRes = new AssignedCommonResponse();
-		assignRes.setAddress(care.getAddress());
-		assignRes.setAvailability_status(care.getAvailability_status());
-		assignRes.setCarecoordinator_name(care.getCarecoordinator_name());
-		assignRes.setCaregivers_count(care.getCaregivers_count());
-		assignRes.setClients_count(care.getClients_count());
-		assignRes.setCreated_date(care.getCreated_date());
-		assignRes.setEmail_id(care.getEmail_id());
-		assignRes.setMobile_no_isdcode(care.getMobile_no_isdcode());
-		assignRes.setMobile_no(care.getMobile_no());
-		assignRes.setModified_date(care.getModified_date());
-		assignRes.setUpload_photo_id(care.getUpload_photo_id());
+			list.add(assignRes);
+			
+		}
 
-		list.add(assignRes);
+		
 
 		response.setData(list);
 
@@ -125,28 +133,32 @@ public class EnquiryController {
 	}
 
 	@PostMapping("/getAllSourceOfReferral")
-	public ResponseEntity<?> getAllSourceOfReferral(@RequestBody EnquiryReferralDto rferralDTO) {
-
-		Referral source = enquiryDetail.getAllSourceOfRefferal(rferralDTO);
+	public ResponseEntity<?> getAllSourceOfReferral() {
+		EnquiryReferralDto rferralDTO =new EnquiryReferralDto();
+		List<Referral> source = enquiryDetail.getAllSourceOfRefferal(rferralDTO);
 
 		ReferralResponse referralResponse = new ReferralResponse();
 
 		referralResponse.setStatusCode(HttpStatus.OK);
 		referralResponse.setStatus("Success");
-		referralResponse.setMessage("Successfully Get SourceOf Referral");
+		referralResponse.setMessage("Successfully Get SourceOf Referral ");
 
 		List<ReferralCommonResponse> referralList = new ArrayList<>();
+		
+		for(Referral ref:source) {
 		ReferralCommonResponse commonResponse = new ReferralCommonResponse();
-		commonResponse.setName(source.getName());
-		commonResponse.setActive(true);
-		commonResponse.setCreatedDate(source.getCreatedDate());
+		
+		commonResponse.setValue(ref.getReferralId());
+		commonResponse.setLabel(ref.getName());
 		referralList.add(commonResponse);
+		}
 
 		referralResponse.setData(referralList);
 
 		return new ResponseEntity<ReferralResponse>(referralResponse, HttpStatus.OK);
 
 	}
+
 
 	@PostMapping("/enquiry/add")
 	public ResponseEntity<?> addEnquiry(@RequestBody EnquiryRequestDTO enquiryRequest) {

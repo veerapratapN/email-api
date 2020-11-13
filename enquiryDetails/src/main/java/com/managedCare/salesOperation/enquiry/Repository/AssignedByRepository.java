@@ -1,5 +1,7 @@
 package com.managedCare.salesOperation.enquiry.Repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,6 +13,6 @@ public interface AssignedByRepository extends JpaRepository<CareCoordinator,Long
 	
 
 	@Query("FROM CareCoordinator c WHERE c.carecoordinator_id >= :carecoordinator_id ")
-	CareCoordinator returnAssignedBy(@Param("carecoordinator_id") long carecoordinator_id);
+	List<CareCoordinator> returnAssignedBy(@Param("carecoordinator_id") long carecoordinator_id);
 
 }

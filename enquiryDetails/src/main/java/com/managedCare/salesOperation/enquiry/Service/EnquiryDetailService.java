@@ -44,10 +44,10 @@ public interface EnquiryDetailService {
 
 	public EnquiryStatusResponse getAllEnquiry(int pageSize, int pageNo);
 	
-	public LeadType getAllLeadType(EnquiryLeadTypeDto leadTypeDto);
+	public List<LeadType> getAllLeadType(EnquiryLeadTypeDto leadTypeDto);
 
-	public Referral getAllSourceOfRefferal(EnquiryReferralDto referralDto);
+	public List<Referral> getAllSourceOfRefferal(EnquiryReferralDto referralDto);
 	
-	public CareCoordinator getAllAssignedBy(AssignedByDto assignedByDto);
+	public List<CareCoordinator> getAllAssignedBy(AssignedByDto assignedByDto);
 
 }

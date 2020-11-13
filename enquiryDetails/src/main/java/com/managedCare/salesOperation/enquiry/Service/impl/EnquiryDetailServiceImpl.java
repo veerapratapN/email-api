@@ -625,22 +625,22 @@ public class EnquiryDetailServiceImpl implements EnquiryDetailService {
 	}
 
 	@Override
-	public LeadType getAllLeadType(EnquiryLeadTypeDto leadTypeDto) {
-		LeadType type = leadTypeRepository.returnLeadType(leadTypeDto.getLeadTypeId());
+	public List<LeadType> getAllLeadType(EnquiryLeadTypeDto leadTypeDto) {
+		List<LeadType> type = leadTypeRepository.returnLeadType(leadTypeDto.getLeadTypeId());
 		return type;
 	}
 
 	@Override
-	public Referral getAllSourceOfRefferal(EnquiryReferralDto referralDto) {
-		Referral sourceOfReferral = referralRepository.returnSourceOfReferral(referralDto.getReferralId());
+	public List<Referral> getAllSourceOfRefferal(EnquiryReferralDto referralDto) {
+		List<Referral> sourceOfReferral = referralRepository.returnSourceOfReferral(referralDto.getReferralId());
 
 		return sourceOfReferral;
 	}
 
 	@Override
-	public CareCoordinator getAllAssignedBy(AssignedByDto assignedByDto) {
+	public List<CareCoordinator> getAllAssignedBy(AssignedByDto assignedByDto) {
 
-		CareCoordinator assigned = assignedByRepository.returnAssignedBy(assignedByDto.getCarecoordinator_id());
+		List<CareCoordinator> assigned = assignedByRepository.returnAssignedBy(assignedByDto.getCarecoordinator_id());
 
 		return assigned;
 	}

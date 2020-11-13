@@ -13,7 +13,7 @@ import com.managedCare.salesOperation.enquiry.Entity.Referral;
 public interface ReferralRepository extends JpaRepository<Referral, Integer> {
 
 	@Query("FROM Referral r WHERE r.referralId >= :referralId ")
-	Referral returnSourceOfReferral(@Param("referralId") int referralId);
+	List<Referral> returnSourceOfReferral(@Param("referralId") int referralId);
 
 	@Query(value = "select NAME from tb_referral", nativeQuery = true)
 	public List<String> findAllReferralByName();

@@ -15,19 +15,16 @@ import lombok.Data;
 @Data
 public class AssignedCommonResponse {
 	
-	
+	private long value;
+	private String label;
 	//private long carecoordinator_id;
 	
-	private int mobile_no_isdcode;
-	private String availability_status;
-	private String address;
-	private String carecoordinator_name;
-	private String email_id;
-	private Timestamp created_date;
-    private Timestamp modified_date;
-	private long mobile_no;
-    private int caregivers_count;
-	private int clients_count;
-	private int upload_photo_id;
+	/*
+	 * private int mobile_no_isdcode; private String availability_status; private
+	 * String address; private String carecoordinator_name; private String email_id;
+	 * private Timestamp created_date; private Timestamp modified_date; private long
+	 * mobile_no; private int caregivers_count; private int clients_count; private
+	 * int upload_photo_id;
+	 */
 
 }

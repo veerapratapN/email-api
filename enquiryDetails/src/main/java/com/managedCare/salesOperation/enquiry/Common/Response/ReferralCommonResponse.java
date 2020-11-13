@@ -16,12 +16,13 @@ import lombok.Data;
 @Data
 public class ReferralCommonResponse {
 	
-	
+	private int value;
+	private String label;
 	//private int referralId;
-	private String name;
+	//private String name;
 //  new field is added as changes
-	private boolean active;
-	private Timestamp createdDate;
+	//private boolean active;
+	//private Timestamp createdDate;
 	
 
 }
