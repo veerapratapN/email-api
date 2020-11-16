@@ -19,9 +19,8 @@ public class CareCoordinator {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "carecoordinator_id", nullable = false)
 	private long carecoordinator_id;
-	
 	@Column(name = "mobile_no_isdcode")
-	private int mobile_no_isdcode;
+	private Integer mobile_no_isdcode;
 	@Column(name = "availability_status")
 	private String availability_status;
 	@Column(name = "address")
@@ -35,11 +34,11 @@ public class CareCoordinator {
 	@Column(name = "modified_date")
     private Timestamp modified_date;
 	@Column(name = "mobile_no")
-	private long mobile_no;
+	private Long mobile_no;
 	@Column(name = "caregivers_count")
-    private int caregivers_count;
+    private Integer caregivers_count;
 	@Column(name = "clients_count")
-	private int clients_count;
-	@Column(name = "upload_photo_id")
-	private int upload_photo_id;
+	private Integer clients_count;
+	@Column(name = "upload_photo_id",nullable = true)
+	private Integer upload_photo_id;
 }

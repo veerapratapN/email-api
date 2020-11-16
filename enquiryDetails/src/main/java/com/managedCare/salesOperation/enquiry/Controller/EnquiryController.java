@@ -47,6 +47,7 @@ import com.managedCare.salesOperation.enquiry.Request.EnquiryLeadTypeDto;
 import com.managedCare.salesOperation.enquiry.Request.EnquiryReferralDto;
 import com.managedCare.salesOperation.enquiry.Request.EnquiryRequestDTO;
 import com.managedCare.salesOperation.enquiry.Response.EnquiriesResponseDto;
+import com.managedCare.salesOperation.enquiry.Response.EnquiryResponse;
 import com.managedCare.salesOperation.enquiry.Response.EnquiryResponseDTO;
 import com.managedCare.salesOperation.enquiry.Response.EnquiryStatusResponse;
 import com.managedCare.salesOperation.enquiry.Service.EnquiryDetailService;
@@ -206,12 +207,24 @@ public class EnquiryController {
 	@PutMapping("/entity/edit/{id}")
 	public ResponseEntity<CommonResponseInsert> editEnquiry(@PathVariable("id") int id,
 			@RequestBody EnquiryEditRequestDTO enquiryRequest) {
-		// enquiryDetail.editEnquery(id, enquiryRequest);
-		commonResponse.setData(null);
-		commonResponse.setMessage("Successfully Updated");
+	     enquiryDetail.editEnquery(id, enquiryRequest);
+		commonResponse.setData("");
+		commonResponse.setMessage("Successfully Updated ");
 		commonResponse.setStatusCode(HttpStatus.ACCEPTED);
 		commonResponse.setStatus("Success");
 		return new ResponseEntity<CommonResponseInsert>(commonResponse, HttpStatus.ACCEPTED);
+	}
+	@GetMapping(value = "/entity/get/{id}", produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<EnquiryResponse> getEnquiry(@PathVariable("id") int id, EnquiryResponse response) {
+		try {
+			EnquiryResponse enquiryResponse = enquiryDetail.getEnquiryInfoById(id, response);
+			return new ResponseEntity<EnquiryResponse>(enquiryResponse, HttpStatus.OK);
+		} catch (NullPointerException ex) {
+			CommonResponseInsert commonError = new CommonResponseInsert();
+			commonError.setStatusCode(HttpStatus.BAD_REQUEST);
+			commonError.setMessage("No Records Found");
+			return new ResponseEntity(commonError, HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	@GetMapping("/customerSupport/getAllFirstName")
@@ -339,18 +352,7 @@ public class EnquiryController {
 		}
 	}
 
-	@GetMapping(value = "/entity/get/{id}", produces = { MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<EnquiriesResponseDto> getEnquiry(@PathVariable("id") int id, EnquiriesResponseDto response) {
-		try {
-			EnquiriesResponseDto enquiryResponse = enquiryDetail.getEnquiryInfoById(id, response);
-			return new ResponseEntity<EnquiriesResponseDto>(enquiryResponse, HttpStatus.OK);
-		} catch (NullPointerException ex) {
-			CommonResponseInsert commonError = new CommonResponseInsert();
-			commonError.setStatusCode(HttpStatus.BAD_REQUEST);
-			commonError.setMessage("No Records Found");
-			return new ResponseEntity(commonError, HttpStatus.BAD_REQUEST);
-		}
-	}
+	
 
 	@GetMapping("/customerSupport/getAllEnquiryType")
 	public ResponseEntity<List<String>> getAllEnquiryType() {

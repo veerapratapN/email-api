@@ -7,7 +7,7 @@ import com.managedCare.salesOperation.enquiry.Entity.GetEnquiry;
 
 @Repository
 public interface GetEnquiryDetailsRepository extends JpaRepository<GetEnquiry, Integer>{
-	@Query(value = "Select enquiry_id,address,ambulation,bathing,bed_mobility,statement,name,age,gender,role,code,complain,other_issue,created_date,doc_seen,feeding,grooming,height,med_hist,mobile_number,recommendation,rehab_criteria,service_preferred,title,toileting,transfer,weight,caller_id,tb_assigned_id,language_id,tb_referral_id,relationship_id,enquiry_type_id,recommdation_id,services_referred_id,call_received_id,activities,status,lead_time,created_By,closed_time,updated_by,updated_date from tb_enquiry where enquiry_id= :id",nativeQuery=true)
+	@Query(value = "Select enquiry_id,enquired_on,activities,adl,assigned_to,complaint,enquiry_status,patient_height,lead_type_id,medical_history,caller_id,received_id,seen_doctor,source_of_referreal,patient_weight from tb_enquiry_details  where enquiry_id= :id",nativeQuery=true)
 	GetEnquiry findEnquiryById(int id);
 	
 	GetEnquiry findByEnquiryId(int id);

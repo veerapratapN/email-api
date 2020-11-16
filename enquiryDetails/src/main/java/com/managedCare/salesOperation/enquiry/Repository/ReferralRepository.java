@@ -18,7 +18,7 @@ public interface ReferralRepository extends JpaRepository<Referral, Integer> {
 	@Query(value = "select NAME from tb_referral", nativeQuery = true)
 	public List<String> findAllReferralByName();
 
-	@Query(value = "Select Name from tb_referral where tb_referral_id = :referralId", nativeQuery = true)
+	@Query(value = "Select Name from tb_referral where referral_id = :referralId", nativeQuery = true)
 	public String getReferralById(int referralId);
 
 }

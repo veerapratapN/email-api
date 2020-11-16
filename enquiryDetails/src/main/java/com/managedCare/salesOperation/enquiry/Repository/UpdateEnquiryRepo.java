@@ -1,6 +1,8 @@
 package com.managedCare.salesOperation.enquiry.Repository;
 
 import java.sql.Timestamp;
+import java.util.List;
+
 import javax.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -12,10 +14,29 @@ import com.managedCare.salesOperation.enquiry.Entity.GetEnquiry;
 @Repository
 @Transactional
 public interface UpdateEnquiryRepo extends JpaRepository<GetEnquiry, Integer>{
-	@Query(value = "Select enquiry_id,address,ambulation,bathing,bed_mobility,caller_name,code,complain,created_date,doc_seen,feeding,grooming,height,med_hist,mobile_number,recommendation,rehab_criteria,service_preferred,title,toileting,transfer,weight,caller_id,tb_referral_id,relationship_id from tb_enquiry where enquiry_id= :id",nativeQuery=true)
+	@Query(value = "Select enquiry_id,enquired_on,activities,adl,assigned_to,complaint,enquiry_status,patient_height,lead_type_id,medical_history,caller_id,received_id,seen_doctor,source_of_referreal,patient_weight from tb_enquiry_details  where enquiry_id= :id", nativeQuery = true)
 	GetEnquiry findEnquiryById(int id);
-	@Modifying
-	@Query(value="Update tb_enquiry set address = :address,title=:title,caller_Name=:callerName,code = :code,mobile_number=:mobNo, caller_id=:callerId,relationship_id=:relationshipId,tb_referral_id=:referralId,complain=:complain,med_hist=:medHistory,doc_seen=:docCheck,height=:height,weight=:weight,feeding=:feeding,bathing=:bathing,toileting=:toileting,grooming=:grooming,ambulation=:ambulation,transfer=:transfer,bed_Mobility=:bedMobility,recommendation=:recommendation,service_preferred=:servicePreferred,activities=:activitiesDet,rehab_criteria=:rehab,status=:status,enquiry_type_id=:enquiryTypeId,lead_time=:leadTime,created_By=:createdBy,created_date=:createdDate,updated_by=:updatedBy,updated_date=current_timestamp where enquiry_id= :id",nativeQuery=true)
-	int updateEnquiry(String address, String title, String callerName, String code, String mobNo, int callerId,int relationshipId, int referralId, String complain, String medHistory, boolean docCheck, String height,String weight, int feeding, int bathing, int toileting, int grooming, int ambulation, int transfer,int bedMobility, int recommendation, int servicePreferred,String activitiesDet,String rehab,int enquiryTypeId, String status, int leadTime,String createdBy,Timestamp createdDate,String updatedBy, int id);
 
+	@Modifying
+
+	/*
+	 * @Query(value =
+	 * "Update tb_enquiry_details  set enquired_on = :enquired_on,lead_type_id=:lead_type_id,received_id=:received_id,assigned_to = :assigned_to,source_of_referreal=:source_of_referreal,complaint=:complain,medical_history=:medicalHistory,seen_doctor=:seenDoctor,patient_height=:height,patient_weight=:weight,enquiry_status=:enquiry_status,adl=:adl where enquiry_id= :id"
+	 * , nativeQuery = true) int updateEnquiry(Timestamp enquired_on, int
+	 * lead_type_id, int received_id, int assigned_to, int source_of_referreal,
+	 * String complain, String medicalHistory, boolean seenDoctor, String height,
+	 * String weight, String enquiry_status, String adl, int id);
+	 */
+	
+	
+	@Query(value = "Update tb_enquiry_details  set enquired_on = :enquired_on,activities=:activities,lead_type_id=:lead_type_id,received_id=:received_id,assigned_to = :assigned_to,source_of_referreal=:source_of_referreal,complaint=:complain,medical_history=:medicalHistory,seen_doctor=:seenDoctor,patient_height=:height,patient_weight=:weight,enquiry_status=:enquiry_status,adl=:adl where enquiry_id= :id", nativeQuery = true)
+	int updateEnquiry(Timestamp enquired_on, int lead_type_id, int received_id, int assigned_to,
+			int source_of_referreal, String complain, String medicalHistory, boolean seenDoctor, String height,
+			String weight, String enquiry_status, String adl,List activities,  int id);
+
+	// caller_id=:caller_id;
+	// AddEnquiryContact contact_information,
+	// String activities,
+	// ,activities=:activities
+	//List activities,
 }

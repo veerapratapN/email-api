@@ -25,6 +25,7 @@ import com.managedCare.salesOperation.enquiry.Entity.RecommdationDetails;
 import com.managedCare.salesOperation.enquiry.Entity.Referral;
 import com.managedCare.salesOperation.enquiry.Entity.Relationship;
 import com.managedCare.salesOperation.enquiry.Entity.ServicesReferred;
+import com.managedCare.salesOperation.enquiry.Response.LeadType;
 
 import lombok.Data;
 
@@ -44,7 +45,6 @@ public class EnquiryRequestDTO {
 
 	private int enquiryId;
 	private Timestamp enquired_on;
-
 	private int lead_type_id;
 	private int received_id;
 	private int assigned_to;

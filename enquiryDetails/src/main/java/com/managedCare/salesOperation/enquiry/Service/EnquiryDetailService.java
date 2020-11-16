@@ -14,6 +14,7 @@ import com.managedCare.salesOperation.enquiry.Request.EnquiryLeadTypeDto;
 import com.managedCare.salesOperation.enquiry.Request.EnquiryReferralDto;
 import com.managedCare.salesOperation.enquiry.Request.EnquiryRequestDTO;
 import com.managedCare.salesOperation.enquiry.Response.EnquiriesResponseDto;
+import com.managedCare.salesOperation.enquiry.Response.EnquiryResponse;
 import com.managedCare.salesOperation.enquiry.Response.EnquiryResponseDTO;
 import com.managedCare.salesOperation.enquiry.Response.EnquiryStatusResponse;
 
@@ -36,7 +37,9 @@ public interface EnquiryDetailService {
 
 	//public EnquiryResponseDTO getEnquiryById(int id, EnquiryResponseDTO response);
 
-	public EnquiriesResponseDto getEnquiryInfoById(int id, EnquiriesResponseDto response);
+	//public EnquiriesResponseDto getEnquiryInfoById(int id, EnquiriesResponseDto response);
+	
+	public EnquiryResponse getEnquiryInfoById(int id, EnquiryResponse response);
 
 	List<String> getAllEnquiryTypeName();
 
@@ -49,5 +52,7 @@ public interface EnquiryDetailService {
 	public List<Referral> getAllSourceOfRefferal(EnquiryReferralDto referralDto);
 	
 	public List<CareCoordinator> getAllAssignedBy(AssignedByDto assignedByDto);
+	
+	int editEnquery(int id, EnquiryEditRequestDTO enquiryRequest);
 
 }

@@ -47,6 +47,7 @@ import com.managedCare.salesOperation.enquiry.Request.EnquiryLeadTypeDto;
 import com.managedCare.salesOperation.enquiry.Request.EnquiryReferralDto;
 import com.managedCare.salesOperation.enquiry.Request.EnquiryRequestDTO;
 import com.managedCare.salesOperation.enquiry.Response.ActivityOfDailyLiving;
+import com.managedCare.salesOperation.enquiry.Response.AddContactResponse;
 import com.managedCare.salesOperation.enquiry.Response.AssignedTo;
 import com.managedCare.salesOperation.enquiry.Response.CallInformation;
 import com.managedCare.salesOperation.enquiry.Response.CallReceivedBy;
@@ -54,6 +55,7 @@ import com.managedCare.salesOperation.enquiry.Response.CallerInformation;
 import com.managedCare.salesOperation.enquiry.Response.ContactInformation;
 import com.managedCare.salesOperation.enquiry.Response.EnquiriesResponseDto;
 import com.managedCare.salesOperation.enquiry.Response.Enquiries_Type;
+import com.managedCare.salesOperation.enquiry.Response.EnquiryResponse;
 import com.managedCare.salesOperation.enquiry.Response.EnquiryResponseDTO;
 import com.managedCare.salesOperation.enquiry.Response.EnquiryStatusResponse;
 import com.managedCare.salesOperation.enquiry.Response.Language;
@@ -77,6 +79,8 @@ public class EnquiryDetailServiceImpl implements EnquiryDetailService {
 	EnquiryAssignedByRepository enquiryAssignedBy;
 	@Autowired
 	private CreateEnquiryRepository createEnquiry;
+	@Autowired
+	private EnquiryLeadTypeRepository enquiryLeadTypeRepository;
 
 	@Autowired
 	private AddEnquiryRepository addEnquiryRepository;
@@ -178,8 +182,7 @@ public class EnquiryDetailServiceImpl implements EnquiryDetailService {
 		enquire.setHeight(enquiryRequest.getWeight());
 		enquire.setEnquiry_status(enquiryRequest.getEnquiry_status());
 		enquire.setContact_information(enquiryRequest.getContact_information());
-		
-		
+
 		List<String> activities = enquiryRequest.getActivities();
 		StringBuilder strbul = new StringBuilder();
 		Iterator<String> iter = activities.iterator();
@@ -192,10 +195,9 @@ public class EnquiryDetailServiceImpl implements EnquiryDetailService {
 		String strActivities = strbul.toString();
 		enquire.setActivities(strActivities);
 		enquire.setAdl(enquiryRequest.getAdl());
-		
+
 		return addEnquiryRepository.save(enquire).getEnquiryId();
 
-		
 		/*
 		 * String strActivities = strbul.toString();
 		 * enquiryDetails.setActivities(strActivities);
@@ -304,238 +306,68 @@ public class EnquiryDetailServiceImpl implements EnquiryDetailService {
 	 */
 
 	@Override
-	public EnquiriesResponseDto getEnquiryInfoById(int id, EnquiriesResponseDto response) throws NullPointerException {
+	public EnquiryResponse getEnquiryInfoById(int id, EnquiryResponse response) throws NullPointerException {
 		GetEnquiry enquiryDetails = getEnquiryRepo.findEnquiryById(id);
 		if (enquiryDetails.equals(null) || enquiryDetails == null) {
 			return null;
 		} else {
+			EnquiryResponse enquiryDto = new ModelMapper().map(enquiryDetails, EnquiryResponse.class);
+			enquiryDetails.setEnquiryId(enquiryDetails.getEnquiryId());
+			enquiryDto.setEnquired_on(enquiryDetails.getEnquired_on());
 
-			// Enquiries_Type enquiries_Type = objManagedCareBO.mapEnquireType();
-			// response.setEnquiry_type(enquiries_Type);
+			com.managedCare.salesOperation.enquiry.Response.LeadType leadtype = new com.managedCare.salesOperation.enquiry.Response.LeadType();
+			leadtype.setValue(enquiryDetails.getLead_type_id());
+			int leadId = enquiryDetails.getLead_type_id();
+			String leadName = enquiryLeadTypeRepository.getNameById(leadId);
+			leadtype.setLabel(leadName);
+			enquiryDto.setLead_type(leadtype);
 
-			EnquiriesResponseDto enquiryDto = new ModelMapper().map(enquiryDetails, EnquiriesResponseDto.class);
+			SourceOfReferral referral = new SourceOfReferral();
+			referral.setValue(enquiryDetails.getSource_of_referreal());
 
-			int enquiryId = enquiryDetails.getEnquiryId();
-			Integer enquiryIdObj = new Integer(enquiryId);
-			String enquireId = enquiryIdObj.toString();
-			String completeEnquire = "#ENQ" + enquireId;
-			enquiryDto.setEnquire_id(completeEnquire);
+			int referralId = enquiryDetails.getSource_of_referreal();
 
-			Enquiries_Type enquiry_type = new Enquiries_Type();
-			enquiry_type.setValue(enquiryDetails.getEnquiryTypeId());
-			int typeId = enquiryDetails.getEnquiryTypeId();
+			String refName = referralRepository.getReferralById(referralId);
+			referral.setLabel(refName);
 
-			String typeName = enquiryTypeRepository.getNameById(typeId);
-			enquiry_type.setLabel(typeName);
+			enquiryDto.setSource_of_referreal(referral);
 
-			// enquiries_Type.setValue(enquiryDetails.getEnquiryTypeId());
-
-			enquiryDto.setEnquiry_type(enquiry_type);
-
-			enquiryDto.setEnquired_on(enquiryDetails.getCreatedDate());
-			enquiryDto.setName(enquiryDetails.getName());
-			enquiryDto.setGender(enquiryDetails.getGender());
-			enquiryDto.setAge(enquiryDetails.getAge());
-
-			CallInformation callInformation = new CallInformation();
 			CallReceivedBy callReceivedBy = new CallReceivedBy();
-			callReceivedBy.setId(enquiryDetails.getCallerId());
-			callReceivedBy.setRole("");
-			int receivedId = enquiryDetails.getCallReceivedId();
-
+			callReceivedBy.setValue(enquiryDetails.getReceived_id());
+			int receivedId = enquiryDetails.getReceived_id();
 			String receivedName = enquiryCallReceivedRepository.getNameById(receivedId);
-
-			callReceivedBy.setName(receivedName);
+			callReceivedBy.setLabel(receivedName);
+			enquiryDto.setCall_received(callReceivedBy);
 
 			AssignedTo assignedTo = new AssignedTo();
-			assignedTo.setId(enquiryDetails.getAssignedId());
-			assignedTo.setRole("");
-			int assignedID = enquiryDetails.getAssignedId();
-			String assignedName = enquiryAssignedBy.getNameById(assignedID);
-			assignedTo.setName(assignedName);
+			assignedTo.setValue(enquiryDetails.getAssigned_to());
 
-			callInformation.setReceived_by(callReceivedBy);
-			callInformation.setAssigned_to(assignedTo);
-			enquiryDto.setCall_information(callInformation);
+			long assignId = enquiryDetails.getAssigned_to();
 
-			CallerInformation callerInformation = new CallerInformation();
-			Realationship realationship = new Realationship();
-			realationship.setValue(enquiryDetails.getRelationshipId());
+			String assignName = assignedByRepository.getAssignedToId(assignId);
+			assignedTo.setLabel(assignName);
+			enquiryDto.setAssigned_To(assignedTo);
 
-			int relationshipId = enquiryDetails.getRelationshipId();
-			String name = relationshipRepository.getNameById(relationshipId);
-			realationship.setLabel(name);
-			// change done
-			callerInformation.setCaller_contact_same(false);
+			// enquiryDto.setLead_type_id(enquiryDetails.getLead_type_id());
+			// enquiryDto.setReceived_id(enquiryDetails.getReceived_id());
+			// enquiryDto.setAssigned_to(enquiryDetails.getAssigned_to());
+			// enquiryDto.setSource_of_referreal(enquiryDetails.getSource_of_referreal());
+			enquiryDto.setComplain(enquiryDetails.getComplain());
+			enquiryDto.setMedicalHistory(enquiryDetails.getMedicalHistory());
+			enquiryDto.setSeenDoctor(enquiryDetails.isSeenDoctor());
+			enquiryDto.setHeight(enquiryDetails.getHeight());
+			enquiryDto.setWeight(enquiryDetails.getWeight());
+			enquiryDto.setEnquiry_status(enquiryDetails.getEnquiry_status());
 
-			callerInformation.setAddress(enquiryDetails.getAddress());
-			callerInformation.setMobile(enquiryDetails.getMobNo());
-			callerInformation.setName(enquiryDetails.getName());
-			callerInformation.setReleationship(realationship);
-			enquiryDto.setCaller_information(callerInformation);
+			AddContactResponse addContact = new AddContactResponse();
+			// addContact.setContactId(enquiryDetails.getCaller_id());
+			enquiryDto.setContact_information(enquiryDetails.getContact_information());
 
-			List<Language> language1 = new ArrayList<>();
-
-			Language langdet = new Language();
-			langdet.setValue(enquiryDetails.getLanguageId());
-			langdet.setLabel("English");
-			// int languageId=enquiryDetails.getLanguageId();
-			// String languageNam=languageDetailsRepository.getNameById(languageId);
-			// langdet.setLabel(languageNam);
-
-			Language langdetails = new Language();
-			langdetails.setValue(enquiryDetails.getLanguageId());
-			int langId = enquiryDetails.getLanguageId();
-			String languageName = languageDetailsRepository.getNameById(langId);
-			langdetails.setLabel(languageName);
-
-			// langdetails.setLabel(enquiryDetails.getLanguageName());
-
-			language1.add(langdet);
-			language1.add(langdetails);
-
-			/*
-			 * Iterator iterator=language1.iterator(); while(iterator.hasNext()) {
-			 * System.out.println(iterator.next()); }
-			 */
-
-			enquiryDto.setLanguage(language1);
-
-			List<ContactInformation> ci = new ArrayList<>();
-
-			ContactInformation contactInformation = new ContactInformation();
-			contactInformation.setValue("mobile");
-			contactInformation.setLabel(enquiryDetails.getMobNo());
-
-			ContactInformation contactInformation1 = new ContactInformation();
-			contactInformation1.setValue("address");
-			contactInformation1.setLabel(enquiryDetails.getAddress());
-
-			ci.add(contactInformation);
-			ci.add(contactInformation1);
-			enquiryDto.setContact_information(ci);
-
-			enquiryDto.setComplaint(enquiryDetails.getComplain());
-			enquiryDto.setMedical_history(enquiryDetails.getMedicalHistory());
-
-			SeenDoctor seenDoctor = new SeenDoctor();
-			// change done
-			seenDoctor.setSeen(false);
-			seenDoctor.setStatement(enquiryDetails.getStatement());
-			enquiryDto.setSeen_a_doctor(seenDoctor);
-
-			List<VerbalAssessment> verbal = new ArrayList<VerbalAssessment>();
-			VerbalAssessment assessment = new VerbalAssessment();
-			assessment.setValue("height");
-			assessment.setLabel(enquiryDetails.getHeight());
-
-			VerbalAssessment assessment1 = new VerbalAssessment();
-			assessment1.setValue("weight");
-			assessment1.setLabel(enquiryDetails.getWeight());
-			verbal.add(assessment);
-			verbal.add(assessment1);
-			enquiryDto.setVerbal_assement(verbal);
-
-			List<ActivityOfDailyLiving> act = new ArrayList<ActivityOfDailyLiving>();
-
-			ActivityOfDailyLiving activity = new ActivityOfDailyLiving();
-
-			activity.setTitle("Feeding");
-			activity.setValue(enquiryDetails.getFeeding());
-
-			ActivityOfDailyLiving activity1 = new ActivityOfDailyLiving();
-			activity1.setTitle("Bathing");
-			activity1.setValue(enquiryDetails.getBathing());
-
-			ActivityOfDailyLiving activity2 = new ActivityOfDailyLiving();
-			activity2.setTitle("Toileting");
-			activity2.setValue(enquiryDetails.getToileting());
-
-			act.add(activity);
-			act.add(activity1);
-			act.add(activity2);
-			enquiryDto.setActivities_of_daily_living(act);
-
-			List<String> activities = new ArrayList<String>();
-			activities.add("NG Tube / PEG Tube");
-			activities.add("Confusion / Memory Problems");
-			activities.add("Tracheostomy");
-			activities.add("Stoma");
-			activities.add("Injections");
-			enquiryDto.setOther_activities(activities);
-
-			List<Recommendation> recommdationlist = new ArrayList<>();
-
-			Recommendation recommendation = new Recommendation();
-			recommendation.setId(enquiryDetails.getRecommdationId());
-
-			int recommId = enquiryDetails.getRecommdationId();
-			String recommName = recommdationRepository.getNameById(recommId);
-			recommendation.setLabel(recommName);
-			recommendation.setValue(enquiryDetails.getRecommdationId());
-			int id4 = enquiryDetails.getRecommdationId();
-			String type = recommdationRepository.getTypeById(id4);
-			recommendation.setType(type);
-			recommdationlist.add(recommendation);
-
-			Recommendation recommendation1 = new Recommendation();
-			recommendation1.setId(2);
-			recommendation1.setLabel(recommName);
-			recommendation1.setValue(2);
-			recommendation1.setType("services");
-			recommdationlist.add(recommendation1);
-
-			enquiryDto.setRecommendations(recommdationlist);
-
-			List<ServiceReferred> ser = new ArrayList<>();
-			ServiceReferred serviceReferred = new ServiceReferred();
-			serviceReferred.setValue(enquiryDetails.getServiceReferredId());
-
-			int serviceReferredId = enquiryDetails.getServiceReferredId();
-			String referralName = serviceReferredRepository.getNameById(serviceReferredId);
-
-			serviceReferred.setLabel(referralName);
-			ser.add(serviceReferred);
-			enquiryDto.setServices_referred(ser);
-
-			enquiryDto.setRegen_rehab_criteria(enquiryDetails.getRehabCriteria());
-
-			enquiryDto.setOther_issues(enquiryDetails.getOther_issues());
-
-			SourceOfReferral sourceOfReferral = new SourceOfReferral();
-			sourceOfReferral.setValue(enquiryDetails.getReferralId());
-			int referralID = enquiryDetails.getReferralId();
-			String referralNames = referralRepository.getReferralById(referralID);
-			sourceOfReferral.setLabel(referralNames);
-
-			enquiryDto.setSource_of_referrel(sourceOfReferral);
-
-			/*
-			 * int relationshipId = enquiryDetails.getRelationshipId(); String name =
-			 * relationshipRepository.getNameById(relationshipId);
-			 */
-
-			// enquiryDto.setRelationshipName(name);
-
-			// int referralId = enquiryDetails.getReferralId();
-			// String referralName = referralRepository.getReferralById(referralId);
-			// enquiryDto.setReferralName(referralName);
-			int callerId = enquiryDetails.getCallerId();
-			String contactName = createContactRepository.getContactById(callerId);
-			// enquiryDto.setContactName(contactName);
-
-			int enquiry_Type = enquiryDetails.getEnquiryTypeId();
-			String activities1 = enquiryDetails.getActivities();
-
-			/*
-			 * List<Integer> list =
-			 * Arrays.stream(activities.split(",")).map(Integer::parseInt)
-			 * .collect(Collectors.toList());
-			 */
-
-			// enquiryDto.setOther_activities(other_activities);
+			enquiryDto.setActivities(enquiryDetails.getActivities());
+			enquiryDto.setAdl(enquiryDetails.getAdl());
 
 			return enquiryDto;
+
 		}
 	}
 
@@ -645,4 +477,75 @@ public class EnquiryDetailServiceImpl implements EnquiryDetailService {
 		return assigned;
 	}
 
+	@Override
+	public int editEnquery(int id, EnquiryEditRequestDTO enquiryRequest) {
+		GetEnquiry enquiryDetails = updateEnquiry.findEnquiryById(id);
+		if (enquiryDetails == null) {
+			return 0;
+		} else {
+
+			enquiryDetails.setEnquired_on(enquiryRequest.getEnquired_on());
+			Timestamp enquired_on = enquiryRequest.getEnquired_on();
+
+			enquiryDetails.setLead_type_id(enquiryRequest.getLead_type_id());
+			int lead_type_id = enquiryRequest.getLead_type_id();
+
+			enquiryDetails.setReceived_id(enquiryRequest.getReceived_id());
+			int received_id = enquiryRequest.getReceived_id();
+
+			enquiryDetails.setAssigned_to(enquiryRequest.getAssigned_to());
+			int assigned_to = enquiryRequest.getAssigned_to();
+
+			enquiryDetails.setSource_of_referreal(enquiryRequest.getSource_of_referreal());
+			int source_of_referreal = enquiryRequest.getSource_of_referreal();
+
+			enquiryDetails.setComplain(enquiryRequest.getComplain());
+			String complain = enquiryRequest.getComplain();
+
+			enquiryDetails.setMedicalHistory(enquiryRequest.getMedicalHistory());
+			String medicalHistory = enquiryRequest.getMedicalHistory();
+
+			enquiryDetails.setSeenDoctor(enquiryRequest.isSeenDoctor());
+			boolean seenDoctor = enquiryRequest.isSeenDoctor();
+
+			enquiryDetails.setHeight(enquiryRequest.getHeight());
+			String height = enquiryRequest.getHeight();
+
+			enquiryDetails.setWeight(enquiryRequest.getWeight());
+			String weight = enquiryRequest.getWeight();
+
+			enquiryDetails.setEnquiry_status(enquiryRequest.getEnquiry_status());
+			String enquiry_status = enquiryRequest.getEnquiry_status();
+
+			List<String> activities1 = enquiryRequest.getActivities();
+			StringBuilder strbul = new StringBuilder();
+			Iterator<String> iter = activities1.iterator();
+			while (iter.hasNext()) {
+				strbul.append(iter.next());
+				if (iter.hasNext()) {
+					strbul.append(",");
+				}
+			}
+			String strActivities = strbul.toString();
+
+			enquiryDetails.setActivities(strActivities);
+			List<String> activities=enquiryRequest.getActivities();
+
+			// enquiryDetails.setActivities(enquiryRequest.getActivities());
+			// String activities=enquiryRequest.getActivities();
+
+			enquiryDetails.setAdl(enquiryRequest.getAdl());
+			String adl = enquiryRequest.getAdl();
+
+			return updateEnquiry.updateEnquiry(enquired_on, lead_type_id, received_id, assigned_to, source_of_referreal,
+					complain, medicalHistory, seenDoctor, height, weight, enquiry_status, adl,activities, received_id);
+			// 
+		}
+
+	}
+
 }
+
+//enquiryDetails.setContact_information(enquiryRequest.getContact_information());
+// AddEnquiryContact
+// contact_information=enquiryRequest.getContact_information();

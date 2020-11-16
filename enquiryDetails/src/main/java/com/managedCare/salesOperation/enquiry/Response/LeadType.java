@@ -6,8 +6,12 @@ import lombok.Data;
 
 @Component
 @Data
-public class CallReceivedBy {
+
+public class LeadType {
+	
 	private int value;
 	private String label;
-	
+	//private int id;
+	//private String leadName;
+
 }

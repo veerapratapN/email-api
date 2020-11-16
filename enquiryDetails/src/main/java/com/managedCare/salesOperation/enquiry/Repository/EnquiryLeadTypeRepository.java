@@ -16,5 +16,8 @@ public interface EnquiryLeadTypeRepository extends JpaRepository<LeadType, Integ
 	
 	@Query(" FROM LeadType t WHERE t.id >=  :id ")
 	List<LeadType> returnLeadType(@Param("id") int id);
+	
+	@Query(value = "select lead_name from tb_en_master_lead_type WHERE id = :id", nativeQuery = true)
+	public String getNameById(int id);
 
 }
