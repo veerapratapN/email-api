@@ -71,6 +71,7 @@ public class FileTransfer {
         }
         
     }
+	
 	public QuoteAttachement getDocById(Integer id) throws RecordNotFoundException 
     {
         Optional<QuoteAttachement> getdoc = quoteRepository.findById(id);

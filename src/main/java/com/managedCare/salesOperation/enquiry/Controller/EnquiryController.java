@@ -89,6 +89,7 @@ public class EnquiryController {
 		 QuoteAttachement updated = fileTransfer.createOrUpdateData(quoteattachement);
 	        return new ResponseEntity<QuoteAttachement>(updated, new HttpHeaders(), HttpStatus.OK);
 	    } 
+	 
 	
 	//getbyid
 	@GetMapping("/{id}")
